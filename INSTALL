@@ -1,0 +1,50 @@
+trac-multiproject-installer is mostly tested with VagrantUp. If you are
+unfamiliar with VagrantUp, please see http://www.vagrantup.com/
+
+--
+
+Requirements:
+
+a) Install Virtualbox, VirtualBox Extensions, VagrantUp for virtual environment
+b) Have existing Ubuntu 12.04 LTS or newer installation
+
+--
+
+1) Configure your installation with provision.conf. Include proxy
+     settings, if necessary.
+
+2) (Optional) Copy sql dump and trac backup to backup/ directory as
+     "dump.sql", "trac.tar.gz" to auto-provision from backup.
+
+3) Have network available. Packages will be downloaded and Trac
+     components downloaded by source. To make testing with VagrantUp
+     much faster, apt archives will be stored in "cache".
+
+4a) $ vagrant up
+4b) # ./provision.sh
+4c) $ sudo ./provision.sh
+
+VagrantUp: Surf to https://yourserver.com:30443/home
+Otherwise: https://yourserver.com:443/home
+
+--
+
+With VagrantUp, port mappings are in place. To change them, edit
+  'Vagrantfile'.
+
+1) http has host port 30080
+2) https has host port 30443
+3) ssh has host port 2222
+
+--
+
+Customize:
+
+1) Feel free to hack the provision script itself
+2) Put scripts to post-install/ dir, they will _sourced_ in, in
+   alphabetical order at the end of the installation. See
+   "50restore-backup.sh" for example.
+
+--
+
+Enjoy!

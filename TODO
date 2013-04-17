@@ -1,0 +1,4 @@
+
+* Chef/Puppet provision would be nicer and more widely usable.
+* Multiproject commits at 16th Apr break installation, thus
+  using commit just prior that.
