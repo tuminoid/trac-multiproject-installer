@@ -1,0 +1,33 @@
+# USAGE:
+# Put dump.sql and trac.tar.gz into backup directory
+# Author: Tuomo Tanskanen <tumi@tumi.fi>
+
+SQL_BACKUP=${PREFIX}backup/dump.sql
+TRAC_BACKUP=${PREFIX}backup/trac.tar.gz
+
+if [ -f $SQL_BACKUP ]; then
+  echo "Restoring SQL backup: $SQL_BACKUP"
+  mysql -u root --password=$MYSQL_PASSWORD <$SQL_BACKUP
+  echo "Success!"
+fi
+
+if [ -f $TRAC_BACKUP ]; then
+  echo "Restoring trac content: $TRAC_BACKUP"
+  cd /tmp && rm -rf mp_backup_restore
+  mkdir mp_backup_restore && cd mp_backup_restore
+  tar xf $TRAC_BACKUP
+
+  rm -rf $trac_root/projects/home
+  mv projects/* $trac_root/projects/
+  mv repositories/* $trac_root/repositories/
+  mv webdav/* $trac_root/webdav/
+  mv downloads/* $trac_root/downloads/
+  mv scripts/hooks/* $trac_root/scripts/hooks/
+  rm -rf /storage/trac/icons && cp -r storage/trac/icons /storage/trac/
+  chown -R www-data:www-data /storage/trac
+  rm -rf $trac_root/themes && mv themes $trac_root
+
+  cd /tmp && rm -rf mp_backup_restore
+  echo "Success!"
+fi
+
