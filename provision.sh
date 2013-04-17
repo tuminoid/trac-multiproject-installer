@@ -76,11 +76,13 @@ fi
 
 
 # Fix some more proxy issues after packages have installed their configuration files
-echo "http-proxy-host = $PROXY_SERVER" | tee -a /etc/subversion/servers
-echo "http-proxy-port = $PROXY_PORT" | tee -a /etc/subversion/servers
-echo "http-proxy-username = $PROXY_USER" | tee -a /etc/subversion/servers
-echo "http-proxy-password = $PROXY_PASSWORD" | tee -a /etc/subversion/servers
-git config --global http.proxy $PROXY
+if [ ! -z "$PROXY" ]; then
+  echo "http-proxy-host = $PROXY_SERVER" | tee -a /etc/subversion/servers
+  echo "http-proxy-port = $PROXY_PORT" | tee -a /etc/subversion/servers
+  echo "http-proxy-username = $PROXY_USER" | tee -a /etc/subversion/servers
+  echo "http-proxy-password = $PROXY_PASSWORD" | tee -a /etc/subversion/servers
+  git config --global http.proxy $PROXY
+fi
 
 
 #
