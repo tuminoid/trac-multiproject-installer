@@ -10,8 +10,8 @@ b) Have existing Ubuntu 12.04 LTS or newer installation
 
 --
 
-1) Configure your installation with provision.conf. Include proxy
-     settings, if necessary.
+1) Copy provision.conf.sample to provision.conf and configure your
+     installation. Include proxy settings, if necessary.
 
 2) (Optional) Copy sql dump and trac backup to backup/ directory as
      "dump.sql", "trac.tar.gz" to auto-provision from backup.
