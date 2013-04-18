@@ -320,19 +320,6 @@ cp MultiProjectPlugin/etc/templates/httpd/conf.d/* /etc/trac \
    && chown -R www-data:www-data $trac_root
 
 
-# Generate SSL certificate for our installation
-if [ ! -z "$SSL_CERT_RESPONSES" ]; then
-  cd $TRAC_INSTALL
-  openssl genrsa -out ca.key 2048
-  echo -e $SSL_CERT_RESPONSES | openssl req -new -key ca.key -out ca.csr
-  openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt
-  chmod 600 ca.*
-  cp ca.crt /etc/ssl/certs/
-  cp ca.key /etc/ssl/private/
-  cp ca.csr /etc/ssl/private/
-fi
-
-
 # Further configure some trac issues
 ln -s /storage/trac/icons $trac_root/htdocs/icons
 chown -R www-data:www-data /storage/trac
