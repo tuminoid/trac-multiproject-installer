@@ -343,13 +343,14 @@ sed -i 's, Header , #Header ,g' /etc/apache2/conf.d/multiproject.conf
 #
 # Post-install extras
 #
-
+set +e
 if [ -d "${PREFIX}post-install" ]; then
   for POSTINST in $(find ${PREFIX}post-install/ -name '*.sh' | sort); do
     echo "Executing post-install: $POSTINST"
     source $POSTINST
   done
 fi
+set -e
 
 
 #
