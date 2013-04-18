@@ -345,7 +345,7 @@ sed -i 's, Header , #Header ,g' /etc/apache2/conf.d/multiproject.conf
 #
 
 if [ -d "${PREFIX}post-install" ]; then
-  for POSTINST in $(find ${PREFIX}post-install/ -name '*.sh'); do
+  for POSTINST in $(find ${PREFIX}post-install/ -name '*.sh' | sort); do
     source $POSTINST
   done
 fi
