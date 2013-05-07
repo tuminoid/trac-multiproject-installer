@@ -33,6 +33,7 @@ if [ ! -z "$PROXY" ]; then
   export http_proxy="$PROXY"
   export https_proxy="$PROXY"
   export ftp_proxy="$PROXY"
+  export GIT_SSL_NO_VERIFY=true
 
   cat <<EOF >/etc/apt/apt.conf.d/98-proxy
   Acquire::http::proxy "$PROXY";
@@ -45,8 +46,9 @@ EOF
   echo "ftp_proxy=$PROXY" >> /etc/environment
 
   alias pip="/usr/bin/pip --proxy=\"$PROXY\""
+  alias wget="/usr/bin/wget -q -nc --no-check-certificate"
 fi
-alias wget="/usr/bin/wget -q -nc --no-check-certificate"
+alias wget="/usr/bin/wget -q -nc"
 
 
 # Pre-fill cache
@@ -99,7 +101,7 @@ python setup.py install
 
 # Install trac and patch it with multiproject patches
 cd $TRAC_INSTALL
-git clone https://projects.developer.nokia.com/git/multiproject.git $TRAC_INSTALL/MultiProjectPlugin
+git clone https://projects.developer.nokia.com/multiproject/git/multiproject $TRAC_INSTALL/MultiProjectPlugin
 # Apr 16 patches cause context mangled failures, sticking to 2eaa4e6 commit for now
 cd $TRAC_INSTALL/MultiProjectPlugin && git checkout 2eaa4e69ab6e30c876ad2f53030c54e8563a3120 && cd $TRAC_INSTALL
 wget -q http://ftp.edgewall.com/pub/trac/Trac-0.12.4.tar.gz
@@ -126,17 +128,17 @@ python setup.py install
 echo -e "\n[mastertickets]\ndot_path = /usr/bin/dot" >> $TRAC_INSTALL/MultiProjectPlugin/etc/templates/trac/project.ini
 
 # Install batchmodify plugin
-git clone --depth=1 https://projects.developer.nokia.com/git/batchmodify.git $TRAC_INSTALL/batchmodify
+git clone --depth=1 https://projects.developer.nokia.com/batchmodify/git/batchmodify $TRAC_INSTALL/batchmodify
 cd $TRAC_INSTALL/batchmodify
 python setup.py install
 
 # Install tracdiscussion plugin
-git clone --depth=1 https://projects.developer.nokia.com/git/tracdiscussion.git $TRAC_INSTALL/tracdiscussion
+git clone --depth=1 https://projects.developer.nokia.com/tracdiscussion/git/tracdiscussion $TRAC_INSTALL/tracdiscussion
 cd $TRAC_INSTALL/tracdiscussion
 python setup.py install
 
 # Install childtickets plugin
-git clone --depth=1 https://projects.developer.nokia.com/git/childtickets.git $TRAC_INSTALL/childtickets
+git clone --depth=1 https://projects.developer.nokia.com/childtickets/git/childtickets $TRAC_INSTALL/childtickets
 cd $TRAC_INSTALL/childtickets
 python setup.py install
 
