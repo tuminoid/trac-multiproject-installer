@@ -36,9 +36,12 @@ if [ ! -z "$PROXY" ]; then
   export GIT_SSL_NO_VERIFY=true
 
   cat <<EOF >/etc/apt/apt.conf.d/98-proxy
-  Acquire::http::proxy "$PROXY";
-  Acquire::https::proxy "$PROXY";
-  Acquire::ftp::proxy "$PROXY";
+Acquire::http::proxy "$PROXY";
+Acquire::https::proxy "$PROXY";
+Acquire::ftp::proxy "$PROXY";
+EOF
+  cat <<EOF >$HOME/.netrc
+machine github.com login $PROXY_USER password $PROXY_PASSWORD
 EOF
 
   echo "http_proxy=$PROXY" >> /etc/environment
