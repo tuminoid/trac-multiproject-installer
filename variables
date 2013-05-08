@@ -1,0 +1,27 @@
+db_user=tracuser
+db_host=localhost
+db_password=$TRAC_PASSWORD
+domain_name=multiproject
+git_bin_path=/usr/bin/git
+trac_root=/var/www/trac
+analytics_log_path=$trac_root/analytics
+gen_content_path=$trac_root/results
+trac_conf_path=$trac_root/config
+trac_logs_path=$trac_root/logs
+trac_project_archives_path=$trac_root/archives
+trac_projects_path=$trac_root/projects
+trac_repositories_path=$trac_root/repositories
+trac_theme_path=$trac_root/themes/default
+trac_webdav_path=$trac_root/webdav
+hgweb_path=$trac_root/hgweb
+sys_logs_path=$trac_root/logs
+trac_htdocs=$trac_root/htdocs
+trac_theme_htdocs=$trac_theme_path/htdocs
+trac_theme_images=$trac_theme_htdocs/images
+git_core_path=/usr/libexec/git-core # True for CentOS - might differ in other systems.
+CHARS="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890"
+salt=""
+for i in {0..30} ; do
+   rand=$((RANDOM % ${#CHARS}))
+   salt=$salt${CHARS:$rand:1}
+done
