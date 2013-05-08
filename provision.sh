@@ -22,6 +22,8 @@
 # Source installation details (proxy, install root, et al)
 if [ -d "/vagrant" ]; then
   PREFIX="/vagrant/"
+else
+  PREFIX=""
 fi
 [ ! -f ${PREFIX}provision.conf ] && echo "error: provision.conf not found" && exit 1
 source ${PREFIX}provision.conf
