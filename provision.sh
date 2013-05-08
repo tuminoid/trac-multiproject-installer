@@ -182,7 +182,7 @@ a2enmod dav
 a2enmod dav_fs
 a2enmod ssl
 a2enmod rewrite
-[ ! -f /etc/apache2/conf.d/fqdn ] && echo "ServerName localhost" > /etc/apache2/conf.d/fqdn
+[ ! -f /etc/apache2/conf.d/fqdn ] && echo "ServerName localhost" > /etc/apache2/conf.d/fqdn
 
 
 # Trac variable setup
