@@ -23,7 +23,7 @@ if [ -f $TRAC_BACKUP ]; then
   mv repositories/* $trac_root/repositories/
   mv webdav/* $trac_root/webdav/
   mv downloads/* $trac_root/downloads/
-  mv scripts/hooks/* $trac_root/scripts/hooks/
+  mv scripts/* $trac_root/scripts/
   rm -rf /storage/trac/icons && cp -r storage/trac/icons /storage/trac/
   chown -R www-data:www-data /storage/trac
   rm -rf $trac_root/themes && mv themes $trac_root
