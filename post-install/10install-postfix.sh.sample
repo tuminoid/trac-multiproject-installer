@@ -1,0 +1,15 @@
+# Install postfix server to handle email sending from Trac
+# Author: Tuomo Tanskanen <tumi@tumi.fi>
+# LICENSE: See 'LICENSE' file
+
+echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
+echo "postfix postfix/mailname string localhost" | debconf-set-selections
+apt-get -y install postfix
+
+echo "yoursite.example" > /etc/mailname
+sed -i 's,#myorigin =,myorigin =,' /etc/postfix/main.cf
+sed -i 's,relayhost =,relayhost = mail.yoursite.example,' /etc/postfix/main.cf
+sed -i 's,inet_interfaces = all,inet_interfaces = loopback-only,' /etc/postfix/main.cf
+echo "inet_protocols = all" >> /etc/postfix/main.cf
+
+service postfix restart
