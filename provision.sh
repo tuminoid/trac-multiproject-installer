@@ -64,7 +64,7 @@ if [ -d ${PREFIX}cache ]; then
 fi
 
 
-# Update repos
+# Update repos and install the required packages
 apt-get update
 apt-get -y install debconf-utils
 echo "mysql-server-5.5 mysql-server/root_password_again password $MYSQL_PASSWORD" | debconf-set-selections
@@ -72,7 +72,8 @@ echo "mysql-server-5.5 mysql-server/root_password password $MYSQL_PASSWORD" | de
 apt-get -y install mysql-server mysql-client apache2-mpm-prefork libapache2-mod-python libapache2-svn \
    wget git subversion python python-dev python-pip python-mysqldb python-subversion \
    unzip libldap2-dev libsasl2-dev memcached libssl0.9.8 curl git-svn mercurial \
-   python-memcache python-ldap python-sqlalchemy python-pygments
+   python-memcache python-ldap python-sqlalchemy python-pygments libjpeg-dev
+ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 
 
 # Populate cache if using VagrantUp for speedy reinstall next time
