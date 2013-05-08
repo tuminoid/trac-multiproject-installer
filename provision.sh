@@ -70,7 +70,7 @@ echo "mysql-server-5.5 mysql-server/root_password password $MYSQL_PASSWORD" | de
 apt-get -y install mysql-server mysql-client apache2-mpm-prefork libapache2-mod-python libapache2-svn \
    wget git subversion python python-dev python-pip python-mysqldb python-subversion \
    unzip libldap2-dev libsasl2-dev memcached libssl0.9.8 curl git-svn mercurial \
-   python-memcache python-ldap
+   python-memcache python-ldap python-sqlalchemy python-pygments
 
 
 # Populate cache if using VagrantUp for speedy reinstall next time
@@ -93,9 +93,6 @@ fi
 #
 # OK, setup is done, let's actually begin installing trac&multiproject
 #
-
-# Install some python requirements
-pip install python-ldap sqlalchemy pygments python-memcached
 
 # Install genshi
 svn co http://svn.edgewall.org/repos/genshi/branches/stable/0.6.x -r 1135 $TRAC_INSTALL/trac-genshi
