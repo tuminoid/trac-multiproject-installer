@@ -23,7 +23,7 @@
 if [ -d "/vagrant" ]; then
   PREFIX="/vagrant/"
 else
-  PREFIX=""
+  PREFIX="$PWD/"
 fi
 [ ! -f ${PREFIX}provision.conf ] && echo "error: provision.conf not found" && exit 1
 source ${PREFIX}provision.conf
