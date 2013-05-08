@@ -1,5 +1,7 @@
+TODO:
 
 * Chef/Puppet provision would be nicer and more widely usable.
 * Multiproject commits at 16th Apr break installation, thus
-  using commit just prior that.
+  using commit just prior that. Check that out.
 * Fix timeout's on some commands (pip especially) on slow networks.
+* Allow caching of git/svn same as deb packages for easier debugging.
