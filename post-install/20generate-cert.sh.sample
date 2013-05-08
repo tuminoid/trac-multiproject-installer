@@ -1,6 +1,7 @@
 # Generate SSL cert for Trac installation
 # Feel free to replace this with your own certificates
 # Author: Tuomo Tanskanen <tumi@tumi.fi>
+# LICENSE: See 'LICENSE' file
 
 if [ ! -z "$SSL_CERT_RESPONSES" ]; then
   cd $TRAC_INSTALL
