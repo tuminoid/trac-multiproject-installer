@@ -106,11 +106,17 @@ python setup.py install
 cd $TRAC_INSTALL
 git clone https://projects.developer.nokia.com/multiproject/git/multiproject $TRAC_INSTALL/MultiProjectPlugin
 # Apr 16 patches cause context mangled failures, sticking to 2eaa4e6 commit for now
-cd $TRAC_INSTALL/MultiProjectPlugin && git checkout 2eaa4e69ab6e30c876ad2f53030c54e8563a3120 && cd $TRAC_INSTALL
-wget -q http://ftp.edgewall.com/pub/trac/Trac-0.12.4.tar.gz
-tar xf Trac-0.12.4.tar.gz
-cd Trac-0.12.4
-for p in `ls -1 ../MultiProjectPlugin/ext/patches/trac/*.patch` ; do patch -p0 --ignore-whitespace < $p ; done
+# Aug 29 - removed line below, they're fixed issue
+# cd $TRAC_INSTALL/MultiProjectPlugin && git checkout 2eaa4e69ab6e30c876ad2f53030c54e8563a3120 && cd $TRAC_INSTALL
+wget -q http://ftp.edgewall.com/pub/trac/Trac-0.12.5.tar.gz
+tar xf Trac-0.12.5.tar.gz
+cd Trac-0.12.5
+
+# Aug 29 - applied in master already, so delete patch in question
+rm -f ../MultiProjectPlugin/ext/patches/trac/trac_ticket_10938.patch
+for PATCH in ../MultiProjectPlugin/ext/patches/trac/*.patch; do
+  patch -p0 --ignore-whitespace < $PATCH
+done
 python setup.py install
 
 # Install xmlrpc plugin
@@ -209,14 +215,14 @@ mkdir -p $trac_root/scripts/hooks \
    && mkdir -p $trac_webdav_path \
    && ln -s $trac_logs_path /var/log/trac \
    && ln -s $trac_conf_path /etc/trac \
-   && ln -s /usr/local/lib/python2.7/dist-packages/Trac-0.12.4-py2.7.egg/trac/htdocs/ $trac_root/htdocs \
+   && ln -s /usr/local/lib/python2.7/dist-packages/Trac-0.12.5-py2.7.egg/trac/htdocs/ $trac_root/htdocs \
    && echo -e '#!/bin/bash\nexit 0' > $trac_root/scripts/hooks/svn-incoming \
    && chmod 755 $trac_root/scripts/hooks/svn-incoming \
    && cp -r MultiProjectPlugin/themes/default/* $trac_theme_path \
    && cp -r MultiProjectPlugin/ext/libs/hgweb $trac_root \
    && echo -e "[web]\nbaseurl = /hg\npush_ssl = false\nallow_push = *\nstyle = gitweb\nallow_archive = bz2 gz zip\n\n[collections]\n/var/www/trac/repositories = $trac_repositories_path" > $trac_root/hgweb/hgweb.config
 
-cd /usr/local/lib/python2.7/dist-packages/Trac-0.12.4-py2.7.egg/trac/htdocs/css
+cd /usr/local/lib/python2.7/dist-packages/Trac-0.12.5-py2.7.egg/trac/htdocs/css
 mv trac.css trac.disabled.css
 mv report.css report.disabled.css
 mv browser.css browser.disabled.css
