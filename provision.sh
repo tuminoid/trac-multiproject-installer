@@ -125,7 +125,9 @@ python setup.py install
 # Install mastertickets plugin
 cd $TRAC_INSTALL
 wget -q -O trac-mastertickets.zip http://trac-hacks.org/changeset/latest/masterticketsplugin?old_path=/\&filename=masterticketsplugin\&format=zip
-unzip trac-mastertickets.zip
+# Aug 29 - test archive so its OK, then ignore the stupid unzip error
+unzip -t trac-mastertickets.zip
+unzip trac-mastertickets.zip || true
 cd masterticketsplugin/trunk
 python setup.py install
 echo -e "\n[mastertickets]\ndot_path = /usr/bin/dot" >> $TRAC_INSTALL/MultiProjectPlugin/etc/templates/trac/project.ini
