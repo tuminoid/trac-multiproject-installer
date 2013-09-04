@@ -230,6 +230,8 @@ cp ${PREFIX}/variables $trac_conf_path
 
 
 # Configure Tracc project.ini
+# Aug 29 - it is incredibly noisy way, be silent while doing it
+set +x
 cd $TRAC_INSTALL
 while IFS= read LINE; do
   if echo $LINE | grep -q '${'; then
@@ -238,6 +240,7 @@ while IFS= read LINE; do
     echo "$LINE" >> /etc/trac/project.ini
   fi
 done < MultiProjectPlugin/etc/templates/trac/project.ini
+set -x
 
 
 # Create home project
