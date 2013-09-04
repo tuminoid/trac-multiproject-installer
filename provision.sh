@@ -17,16 +17,14 @@
 [ -f /.force-provision ] && rm -f /.force-provision /.provision-done
 [ -f /.provision-done ] && echo "info: provison-done flag up, exit" && exit 0
 
-
-
 # Source installation details (proxy, install root, et al)
 if [ -d "/vagrant" ]; then
-  PREFIX="/vagrant/"
+  PREFIX="/vagrant"
 else
-  PREFIX="$PWD/"
+  PREFIX="$PWD"
 fi
-[ ! -f ${PREFIX}provision.conf ] && echo "error: provision.conf not found" && exit 1
-source ${PREFIX}provision.conf
+[ ! -f ${PREFIX}/provision.conf ] && echo "error: provision.conf not found" && exit 1
+source ${PREFIX}/provision.conf
 mkdir -p $TRAC_INSTALL
 
 
@@ -58,9 +56,9 @@ alias wget="/usr/bin/wget -q -nc"
 
 # Pre-fill cache
 #  This speeds up repetive vagrant up/down on slow networks
-if [ -d ${PREFIX}cache ]; then
+if [ -d ${PREFIX}/.cache ]; then
   mkdir -p /var/cache/apt/archives
-  cp ${PREFIX}cache/*.deb /var/cache/apt/archives/
+  cp ${PREFIX}/.cache/*.deb /var/cache/apt/archives/
 fi
 
 
@@ -77,9 +75,9 @@ ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 
 
 # Populate cache if using VagrantUp for speedy reinstall next time
-if [ ! -d "${PREFIX}cache" ]; then
-  mkdir -p ${PREFIX}cache
-  cp /var/cache/apt/archives/*.deb ${PREFIX}cache
+if [ ! -d "${PREFIX}/.cache" ]; then
+  mkdir -p ${PREFIX}/.cache
+  cp /var/cache/apt/archives/*.deb ${PREFIX}/.cache
 fi
 
 
@@ -197,7 +195,7 @@ a2enmod rewrite
 
 
 # Trac variable setup
-source ${PREFIX}variables
+source ${PREFIX}/variables
 
 
 # Configure Trac
@@ -228,7 +226,7 @@ mv report.css report.disabled.css
 mv browser.css browser.disabled.css
 mv ticket.css ticket.disabled.css
 touch trac.css browser.css ticket.css report.css
-cp ${PREFIX}variables $trac_conf_path
+cp ${PREFIX}/variables $trac_conf_path
 
 
 # Configure Tracc project.ini
@@ -319,8 +317,8 @@ sed -i 's, Header , #Header ,g' /etc/apache2/conf.d/multiproject.conf
 # Post-install extras
 #
 set +e
-if [ -d "${PREFIX}post-install" ]; then
-  for POSTINST in $(find ${PREFIX}post-install/ -name '*.sh' | sort); do
+if [ -d "${PREFIX}/post-install" ]; then
+  for POSTINST in $(find ${PREFIX}/post-install/ -name '*.sh' | sort); do
     echo "Executing post-install: $POSTINST"
     source $POSTINST
   done
