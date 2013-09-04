@@ -48,10 +48,9 @@ EOF
   echo "https_proxy=$PROXY" >> /etc/environment
   echo "ftp_proxy=$PROXY" >> /etc/environment
 
-  alias pip="/usr/bin/pip --proxy=\"$PROXY\""
-  alias wget="/usr/bin/wget -q -nc --no-check-certificate"
+  wget() { /usr/bin/wget -q -nc --no-check-certificate $@; }
 fi
-alias wget="/usr/bin/wget -q -nc"
+wget() { /usr/bin/wget -q -nc $@; }
 
 
 # Pre-fill cache
@@ -103,10 +102,8 @@ python setup.py install
 # Install trac and patch it with multiproject patches
 cd $TRAC_INSTALL
 git clone https://projects.developer.nokia.com/multiproject/git/multiproject $TRAC_INSTALL/MultiProjectPlugin
-# Apr 16 patches cause context mangled failures, sticking to 2eaa4e6 commit for now
-# Aug 29 - removed line below, they're fixed issue
-# cd $TRAC_INSTALL/MultiProjectPlugin && git checkout 2eaa4e69ab6e30c876ad2f53030c54e8563a3120 && cd $TRAC_INSTALL
-wget -q http://ftp.edgewall.com/pub/trac/Trac-0.12.5.tar.gz
+cd $TRAC_INSTALL/MultiProjectPlugin && git checkout 3f0197e1b64caeead9ceeae3fc3c340847d47d53 && cd $TRAC_INSTALL
+wget http://ftp.edgewall.com/pub/trac/Trac-0.12.5.tar.gz
 tar xf Trac-0.12.5.tar.gz
 cd Trac-0.12.5
 
@@ -128,7 +125,7 @@ python setup.py install
 
 # Install mastertickets plugin
 cd $TRAC_INSTALL
-wget -q -O trac-mastertickets.zip http://trac-hacks.org/changeset/latest/masterticketsplugin?old_path=/\&filename=masterticketsplugin\&format=zip
+wget -O trac-mastertickets.zip http://trac-hacks.org/changeset/latest/masterticketsplugin?old_path=/\&filename=masterticketsplugin\&format=zip
 # Aug 29 - test archive so its OK, then ignore the stupid unzip error
 unzip -t trac-mastertickets.zip
 unzip trac-mastertickets.zip || true
