@@ -290,7 +290,7 @@ trac-admin $trac_projects_path/home wiki upgrade
 
 # Fix apache configuration
 cd $TRAC_INSTALL
-cp MultiProjectPlugin/etc/templates/httpd/conf.d/* /etc/trac \
+cp -a MultiProjectPlugin/etc/templates/httpd/conf.d/* /etc/trac/ \
    && sed -i "s@\${domain_name}@$domain_name@g" /etc/trac/multiproject.conf \
    && sed -i "s@\${hgweb_path}@$hgweb_path@g" /etc/trac/multiproject.conf \
    && sed -i "s@\${sys_logs_path}@$sys_logs_path@g" /etc/trac/multiproject.conf \
