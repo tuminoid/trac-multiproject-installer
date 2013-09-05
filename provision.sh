@@ -26,6 +26,8 @@ fi
 [ ! -f ${PREFIX}/provision.conf ] && echo "error: provision.conf not found" && exit 1
 source ${PREFIX}/provision.conf
 mkdir -p $TRAC_INSTALL
+CACHE="$PREFIX/.cache"
+mkdir -p $CACHE
 
 
 # Enable proxy if so configured at provision.conf
@@ -48,16 +50,16 @@ EOF
   echo "https_proxy=$PROXY" >> /etc/environment
   echo "ftp_proxy=$PROXY" >> /etc/environment
 
-  wget() { /usr/bin/wget -q -nc --no-check-certificate $@; }
+  wget() { /usr/bin/wget -q --no-check-certificate $@; }
 fi
-wget() { /usr/bin/wget -q -nc $@; }
+wget() { /usr/bin/wget -q $@; }
 
 
 # Pre-fill cache
 #  This speeds up repetive vagrant up/down on slow networks
-if [ -d ${PREFIX}/.cache ]; then
+if [ -d ${PREFIX}/.cache/deb ]; then
   mkdir -p /var/cache/apt/archives
-  cp ${PREFIX}/.cache/*.deb /var/cache/apt/archives/
+  cp ${PREFIX}/.cache/deb/*.deb /var/cache/apt/archives/
 fi
 
 
@@ -74,9 +76,9 @@ ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 
 
 # Populate cache if using VagrantUp for speedy reinstall next time
-if [ ! -d "${PREFIX}/.cache" ]; then
-  mkdir -p ${PREFIX}/.cache
-  cp /var/cache/apt/archives/*.deb ${PREFIX}/.cache
+if [ ! -d "${PREFIX}/.cache/deb" ]; then
+  mkdir -p ${PREFIX}/.cache/deb
+  cp /var/cache/apt/archives/*.deb ${PREFIX}/.cache/deb/
 fi
 
 
@@ -94,80 +96,87 @@ fi
 # OK, setup is done, let's actually begin installing trac&multiproject
 #
 
-# Install genshi
-svn co http://svn.edgewall.org/repos/genshi/branches/stable/0.6.x -r 1135 $TRAC_INSTALL/trac-genshi
-cd $TRAC_INSTALL/trac-genshi
-python setup.py install
+# args: scm name url rev
+checkout-module()
+{
+  SCM="$1"
+  NAME="$2"
+  REPO="$3"
+  REV="$4"
+  CDIR="$CACHE/$NAME"
+
+  mkdir -p $CACHE
+  case "$SCM" in
+svn)
+  [ ! -d "$CDIR" ] && svn co $REPO -r ${REV:-"HEAD"} $CDIR
+  cp -a $CDIR $TRAC_INSTALL/
+  ;;
+git)
+  [ ! -d "$CDIR" ] && git clone $REPO $CDIR && (cd $CDIR && git checkout -b trac_install $REV)
+  cp -a $CDIR $TRAC_INSTALL/
+  ;;
+hg)
+  [ ! -d "$CDIR" ] && hg clone $REPO $CDIR && [ ! -z "$REV" ] && (cd $CDIR && hg up $REV)
+  cp -a $CDIR $TRAC_INSTALL/
+  ;;
+zip)
+  [ ! -f "$CDIR" ] && (cd $CACHE && wget -nc -O $NAME $REPO && unzip -t $NAME)
+  (cd $TRAC_INSTALL && unzip $CACHE/$NAME || true)
+  ;;
+tar)
+  [ ! -f "$CDIR" ] && (cd $CACHE && wget -nc -O $NAME $REPO)
+  (cd $TRAC_INSTALL && tar xf $CACHE/$NAME)
+  ;;
+*)
+  echo "error: unknown option '$SCM' in checkout-module(), aborting"
+  exit 1
+  ;;
+esac
+}
+
+# install module
+# args: scm name url rev
+install-module()
+{
+  checkout-module $1 $2 $3 $4
+  DIR=$(basename $(basename $2 .zip) .tar.gz)
+  cd $TRAC_INSTALL/$DIR
+  python setup.py install
+}
+
+
+# Let's cache everything to make it speedy
+# Install Trac, Multiproject and plugins
+
+# xmlrpc and genshi are required for install
+install-module svn trac-genshi http://svn.edgewall.org/repos/genshi/branches/stable/0.6.x 1135
+install-module svn trac-xmlrpc http://trac-hacks.org/svn/xmlrpcplugin/trunk 8869
 
 # Install trac and patch it with multiproject patches
-cd $TRAC_INSTALL
-git clone https://projects.developer.nokia.com/multiproject/git/multiproject $TRAC_INSTALL/MultiProjectPlugin
-cd $TRAC_INSTALL/MultiProjectPlugin && git checkout 3f0197e1b64caeead9ceeae3fc3c340847d47d53 && cd $TRAC_INSTALL
-wget http://ftp.edgewall.com/pub/trac/Trac-0.12.5.tar.gz
-tar xf Trac-0.12.5.tar.gz
-cd Trac-0.12.5
-
-# Aug 29 - applied in master already, so delete patch in question
+checkout-module git MultiProjectPlugin https://projects.developer.nokia.com/multiproject/git/multiproject 3f0197e1b64caeead9ceeae3fc3c340847d47d53
+checkout-module tar Trac-0.12.5.tar.gz http://ftp.edgewall.com/pub/trac/Trac-0.12.5.tar.gz
+# Aug 29 - applied in 0.12.5 already, so delete patch in question
+cd $TRAC_INSTALL/Trac-0.12.5
 rm -f ../MultiProjectPlugin/ext/patches/trac/trac_ticket_10938.patch
 for PATCH in ../MultiProjectPlugin/ext/patches/trac/*.patch; do
   patch -p0 --ignore-whitespace < $PATCH
 done
 python setup.py install
-
-# Install xmlrpc plugin
-svn co http://trac-hacks.org/svn/xmlrpcplugin/trunk -r 8869 $TRAC_INSTALL/trac-xmlrpc
-cd $TRAC_INSTALL/trac-xmlrpc
-python setup.py install
-
-# install multiproject plugin
 cd $TRAC_INSTALL/MultiProjectPlugin/plugins/multiproject
 python setup.py install
 
-# Install mastertickets plugin
-cd $TRAC_INSTALL
-wget -O trac-mastertickets.zip http://trac-hacks.org/changeset/latest/masterticketsplugin?old_path=/\&filename=masterticketsplugin\&format=zip
-# Aug 29 - test archive so its OK, then ignore the stupid unzip error
-unzip -t trac-mastertickets.zip
-unzip trac-mastertickets.zip || true
-cd masterticketsplugin/trunk
+checkout-module zip trac-mastertickets.zip http://trac-hacks.org/changeset/latest/masterticketsplugin?old_path=/\&filename=masterticketsplugin\&format=zip
+cd $TRAC_INSTALL/masterticketsplugin/trunk
 python setup.py install
 echo -e "\n[mastertickets]\ndot_path = /usr/bin/dot" >> $TRAC_INSTALL/MultiProjectPlugin/etc/templates/trac/project.ini
 
-# Install batchmodify plugin
-git clone --depth=1 https://projects.developer.nokia.com/batchmodify/git/batchmodify $TRAC_INSTALL/batchmodify
-cd $TRAC_INSTALL/batchmodify
-python setup.py install
-
-# Install tracdiscussion plugin
-git clone --depth=1 https://projects.developer.nokia.com/tracdiscussion/git/tracdiscussion $TRAC_INSTALL/tracdiscussion
-cd $TRAC_INSTALL/tracdiscussion
-python setup.py install
-
-# Install childtickets plugin
-git clone --depth=1 https://projects.developer.nokia.com/childtickets/git/childtickets $TRAC_INSTALL/childtickets
-cd $TRAC_INSTALL/childtickets
-python setup.py install
-
-# Install customfieldadmin plugin
-svn co http://trac-hacks.org/svn/customfieldadminplugin/0.11 -r 11265 $TRAC_INSTALL/trac-customfieldadmin
-cd $TRAC_INSTALL/trac-customfieldadmin
-python setup.py install
-
-# Install tracwysiwyg plugin
-svn co http://trac-hacks.org/svn/tracwysiwygplugin/0.12 $TRAC_INSTALL/tracwysiwygplugin
-cd $TRAC_INSTALL/tracwysiwygplugin
-python setup.py install
-
-# Install mercurial plugin
-hg clone https://hg.edgewall.org/trac/mercurial-plugin $TRAC_INSTALL/mercurial-plugin
-cd $TRAC_INSTALL/mercurial-plugin
-hg up 0.12
-python setup.py install
-
-# Install git plugin
-git clone https://github.com/hvr/trac-git-plugin $TRAC_INSTALL/trac-git-plugin
-cd $TRAC_INSTALL/trac-git-plugin
-python setup.py install
+install-module git batchmodify https://projects.developer.nokia.com/batchmodify/git/batchmodify
+install-module git tracdiscussion https://projects.developer.nokia.com/tracdiscussion/git/tracdiscussion
+install-module git childtickets https://projects.developer.nokia.com/childtickets/git/childtickets
+install-module svn trac-customfieldadmin http://trac-hacks.org/svn/customfieldadminplugin/0.11 11265
+install-module svn trac-wysiwyg http://trac-hacks.org/svn/tracwysiwygplugin/0.12
+install-module hg trac-mercurial https://hg.edgewall.org/trac/mercurial-plugin 0.12
+install-module git trac-git https://github.com/hvr/trac-git-plugin
 
 
 # Configure mysql
@@ -192,8 +201,7 @@ a2enmod rewrite
 
 
 # Trac variable setup
-source ${PREFIX}/variables
-
+set +x; source ${PREFIX}/variables; set -x
 
 # Configure Trac
 cd $TRAC_INSTALL
