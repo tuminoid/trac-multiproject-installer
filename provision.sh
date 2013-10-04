@@ -59,7 +59,7 @@ wget() { /usr/bin/wget -q $@; }
 #  This speeds up repetive vagrant up/down on slow networks
 if [ -d ${PREFIX}/.cache/deb ]; then
   mkdir -p /var/cache/apt/archives
-  cp ${PREFIX}/.cache/deb/*.deb /var/cache/apt/archives/
+  cp ${PREFIX}/.cache/deb/*.deb /var/cache/apt/archives/ || true
 fi
 
 
@@ -78,7 +78,7 @@ ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 # Populate cache if using VagrantUp for speedy reinstall next time
 if [ ! -d "${PREFIX}/.cache/deb" ]; then
   mkdir -p ${PREFIX}/.cache/deb
-  cp /var/cache/apt/archives/*.deb ${PREFIX}/.cache/deb/
+  cp /var/cache/apt/archives/*.deb ${PREFIX}/.cache/deb/ || true
 fi
 
 
