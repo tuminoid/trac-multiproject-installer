@@ -1,10 +1,9 @@
 #!/bin/bash -ex
 
-# If using VagrantUp, this file is run as provision script as
-#  non-interactive root.
+# If using VagrantUp, this file is run as provision script as non-interactive root.
 # All commands retuning non-zero will abort process.
 #
-# Copyright 2013: Tuomo Tanskanen <tumi@tumi.fi>
+# Copyright 2013 Tuomo Tanskanen <tumi@tumi.fi>
 #
 
 # All commands expect root access.
@@ -198,6 +197,10 @@ a2enmod dav_fs
 a2enmod ssl
 a2enmod rewrite
 [ ! -f /etc/apache2/conf.d/fqdn ] && echo "ServerName localhost" > /etc/apache2/conf.d/fqdn
+
+# More apache2 conf - don't use port 80 at all
+a2dissite 000-default
+sed -i -e 's,^NameVirtualHost \*:80$,# NameVirtualHost *:80,' -e 's,^Listen 80$,# Listen 80,' /etc/apache2/ports.conf
 
 
 # Trac variable setup
