@@ -63,7 +63,8 @@ fi
 
 
 # Update repos and install the required packages
-apt-get update
+apt-get -y update
+apt-get -y upgrade
 apt-get -y install debconf-utils
 echo "mysql-server-5.5 mysql-server/root_password_again password $MYSQL_PASSWORD" | debconf-set-selections
 echo "mysql-server-5.5 mysql-server/root_password password $MYSQL_PASSWORD" | debconf-set-selections
