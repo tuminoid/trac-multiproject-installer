@@ -55,6 +55,7 @@ wget() { /usr/bin/wget -q $@; }
 
 
 # Update repos and install the required packages
+export DEBIAN_FRONTEND=noninteractive
 apt-get -y update
 apt-get -y upgrade
 apt-get -y install debconf-utils
