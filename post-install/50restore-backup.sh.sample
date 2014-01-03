@@ -3,8 +3,8 @@
 # Author: Tuomo Tanskanen <tumi@tumi.fi>
 # LICENSE: See 'LICENSE' file
 
-SQL_BACKUP=${PREFIX}backup/dump.sql
-TRAC_BACKUP=${PREFIX}backup/trac.tar.gz
+SQL_BACKUP=${PREFIX}/backup/dump.sql
+TRAC_BACKUP=${PREFIX}/backup/trac.tar.gz
 
 if [ -f $SQL_BACKUP ]; then
   echo "Restoring SQL backup: $SQL_BACKUP"
