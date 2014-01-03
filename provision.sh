@@ -54,14 +54,6 @@ fi
 wget() { /usr/bin/wget -q $@; }
 
 
-# Pre-fill cache
-#  This speeds up repetive vagrant up/down on slow networks
-if [ -d ${PREFIX}/.cache/deb ]; then
-  mkdir -p /var/cache/apt/archives
-  cp ${PREFIX}/.cache/deb/*.deb /var/cache/apt/archives/ || true
-fi
-
-
 # Update repos and install the required packages
 apt-get -y update
 apt-get -y upgrade
@@ -73,13 +65,6 @@ apt-get -y install mysql-server mysql-client apache2-mpm-prefork libapache2-mod-
    unzip libldap2-dev libsasl2-dev memcached libssl0.9.8 curl git-svn mercurial \
    python-memcache python-ldap python-sqlalchemy python-pygments libjpeg-dev
 ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
-
-
-# Populate cache if using VagrantUp for speedy reinstall next time
-if [ ! -d "${PREFIX}/.cache/deb" ]; then
-  mkdir -p ${PREFIX}/.cache/deb
-  cp /var/cache/apt/archives/*.deb ${PREFIX}/.cache/deb/ || true
-fi
 
 
 # Fix some more proxy issues after packages have installed their configuration files
