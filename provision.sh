@@ -139,7 +139,7 @@ install-module svn trac-genshi http://svn.edgewall.org/repos/genshi/branches/sta
 install-module svn trac-xmlrpc http://trac-hacks.org/svn/xmlrpcplugin/trunk 8869
 
 # Install trac and patch it with multiproject patches
-checkout-module git MultiProjectPlugin https://projects.developer.nokia.com/multiproject/git/multiproject 3f0197e1b64caeead9ceeae3fc3c340847d47d53
+checkout-module git MultiProjectPlugin https://github.com/nokia-developer/trac-multiproject.git 3f0197e1b64caeead9ceeae3fc3c340847d47d53
 checkout-module tar Trac-0.12.5.tar.gz http://ftp.edgewall.com/pub/trac/Trac-0.12.5.tar.gz
 # Aug 29 - applied in 0.12.5 already, so delete patch in question
 cd $TRAC_INSTALL/Trac-0.12.5
@@ -156,13 +156,13 @@ cd $TRAC_INSTALL/masterticketsplugin/trunk
 python setup.py install
 echo -e "\n[mastertickets]\ndot_path = /usr/bin/dot" >> $TRAC_INSTALL/MultiProjectPlugin/etc/templates/trac/project.ini
 
-install-module git batchmodify https://projects.developer.nokia.com/batchmodify/git/batchmodify
-install-module git tracdiscussion https://projects.developer.nokia.com/tracdiscussion/git/tracdiscussion
-install-module git childtickets https://projects.developer.nokia.com/childtickets/git/childtickets
+install-module git batchmodify https://github.com/nokia-developer/trac-batchmodify.git
+install-module git tracdiscussion https://github.com/nokia-developer/trac-discussion.git
+install-module git childtickets https://github.com/nokia-developer/trac-childtickets.git
 install-module svn trac-customfieldadmin http://trac-hacks.org/svn/customfieldadminplugin/0.11 11265
 install-module svn trac-wysiwyg http://trac-hacks.org/svn/tracwysiwygplugin/0.12
 install-module hg trac-mercurial https://hg.edgewall.org/trac/mercurial-plugin 0.12
-install-module git trac-git https://github.com/hvr/trac-git-plugin
+install-module git trac-git https://github.com/hvr/trac-git-plugin.git
 
 
 # Configure mysql
